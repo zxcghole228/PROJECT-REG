@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+
+{% block title %}<title>Достопримечательности</title>{% endblock %}
+
+{% block content %}
+<a href="/" class="btn btn-dark">Назад</a>
+    <h1>{{context['item'].title}}</h1>
+      <img src="data:;base64,{{ context['image'] }}"/>
+      <p>Номер в реестре: {{context['item'].number}}</p>
+      <p>Регион: {{context['item'].region}}</p>
+      <p>Адресс: {{context['item'].addres}}</p>
+      <p>Категория: {{context['item'].category.name}}</p>
+      <p>Вид объекта: {{context['item'].type.name}}</p>
+      <p>Принадлежность к юнеско: {{context['item'].Unesko}}</p>
+      <p>Особо ценный объект: {{context['item'].Rare_obj}}</p>
+      {% if current_user.is_authenticated and current_user.superuser%}
+          <div>
+              <a href="/edit_attractions/{{ context['item'].id }}" class="btn btn-warning">
+                  Изменить
+              </a>
+              <a href="/delete_attractions/{{ context['item'].id }}" class="btn btn-danger">
+                  Удалить
+              </a>
+          </div>
+      {% endif %}
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{form.comment.label}}<br>
+        {{form.comment(class="form-control")}}<br>
+        {% for error in form.comment.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+
+<div>
+    {% for comment in context['comments'] %}
+    <br>{{comment.user.name}}
+    <p>{{comment.comment}}</p>
+    {% endfor %}
+</div>
+{% endblock %}

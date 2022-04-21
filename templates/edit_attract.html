@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Изменение объекта</h1>
+<form action="" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="photo">Выберите файл</label>
+        <input type="file" class="form-control-file" id="photo" name="file">
+    </div>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.title.label }}<br>
+        {{ form.title(class="form-control") }}<br>
+        {% for error in form.title.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.number.label }}<br>
+        {{ form.number(class="form-control") }}<br>
+        {% for error in form.number.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.region.label }}<br>
+        {{ form.region(class="form-control") }}<br>
+        {% for error in form.region.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.addres.label }}<br>
+        {{ form.addres(class="form-control") }}<br>
+        {% for error in form.addres.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.categories }}
+    </p>
+    <p>
+        {{ form.types }}
+    </p>
+    <p>{{ form.unesko() }} {{ form.unesko.label }}</p>
+    <p>{{ form.rare_obj() }} {{ form.rare_obj.label }}</p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}
