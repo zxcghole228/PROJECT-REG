@@ -57,17 +57,29 @@ def new_attract():
     form.types.choices = choices2
     if form.validate_on_submit():
         attract = Attractions()
-        attract.title = form.title.data
-        attract.number = form.number.data
-        attract.region = form.region.data
-        attract.addres = form.addres.data
-        attract.categories = form.categories.data
-        attract.types = form.types.data
-        attract.Unesko = form.unesko.data
-        attract.Rare_obj = form.rare_obj.data
-        attract.user_id = current_user.id
         db_sess.add(attract)
         db_sess.commit()
+        if attract:
+            file = request.files['file']
+            if file:
+                new_file = Image()
+                new_file.name = file.filename
+                new_file.data = file.read()
+                new_file.attract_id = attract.id
+                db_sess.add(new_file)
+                db_sess.commit()
+
+            attract.title = form.title.data
+            attract.number = form.number.data
+            attract.region = form.region.data
+            attract.addres = form.addres.data
+            attract.categories = form.categories.data
+            attract.types = form.types.data
+            attract.Unesko = form.unesko.data
+            attract.Rare_obj = form.rare_obj.data
+            attract.user_id = current_user.id
+            db_sess.commit()
+
         return redirect('/')
     return render_template('new_attract.html',
                            form=form)
@@ -108,6 +120,7 @@ def edit_attract(obj_id):
     form.categories.choices = choices1
     form.types.choices = choices2
     attract = db_sess.query(Attractions).filter(Attractions.id == obj_id).first()
+    image = db_sess.query(Image).filter(Image.attract_id == obj_id).first()
     if request.method == "GET":
         if attract:
             form.title.data = attract.title
@@ -122,6 +135,9 @@ def edit_attract(obj_id):
             abort(404)
     if form.validate_on_submit():
         if attract:
+            if image:
+                db_sess.delete(image)
+                db_sess.commit()
             file = request.files['file']
             new_file = Image()
             new_file.name = file.filename
@@ -151,11 +167,15 @@ def edit_attract(obj_id):
 def news_delete(obj_id):
     db_sess = db_session.create_session()
     attract = db_sess.query(Attractions).filter(Attractions.id == obj_id).first()
+    image = db_sess.query(Image).filter(Image.attract_id == obj_id).first()
     if attract:
         db_sess.delete(attract)
         db_sess.commit()
     else:
         abort(404)
+    if image:
+        db_sess.delete(image)
+        db_sess.commit()
     return redirect('/')
 
 
@@ -215,5 +235,4 @@ def upload():
 if __name__ == '__main__':
     db_session.global_init("аttractions.db")
     app.register_blueprint(attracts_api.blueprint)
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(port=8080, host='127.0.0.1')

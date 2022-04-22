@@ -6,14 +6,26 @@
 {% block content %}
 <a href="/" class="btn btn-dark">Назад</a>
     <h1>{{context['item'].title}}</h1>
-      <img src="data:;base64,{{ context['image'] }}"/>
+      {%if context['image']%}
+          <img src="data:;base64,{{ context['image'] }}" width="500" height="400" alt=""/>
+      {%endif%}
       <p>Номер в реестре: {{context['item'].number}}</p>
       <p>Регион: {{context['item'].region}}</p>
       <p>Адресс: {{context['item'].addres}}</p>
       <p>Категория: {{context['item'].category.name}}</p>
       <p>Вид объекта: {{context['item'].type.name}}</p>
-      <p>Принадлежность к юнеско: {{context['item'].Unesko}}</p>
-      <p>Особо ценный объект: {{context['item'].Rare_obj}}</p>
+      <p>Принадлежность к юнеско:
+          {% if context['item'].Unesko %}
+            Да
+          {% else %}
+            Нет
+          {% endif %}</p>
+      <p>Особо ценный объект:
+          {%if context['item'].Rare_obj%}
+                Да
+          {%else%}
+                Нет
+          {%endif%}</p>
       {% if current_user.is_authenticated and current_user.superuser%}
           <div>
               <a href="/edit_attractions/{{ context['item'].id }}" class="btn btn-warning">
